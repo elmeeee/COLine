@@ -9,25 +9,29 @@ export default defineConfig({
             registerType: 'autoUpdate',
             includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
             manifest: {
-                name: 'Commuter Line PWA',
+                name: 'COLine - Jadwal KRL Real-Time',
                 short_name: 'COLine',
-                description: 'Real-time Commuter Line Schedules & Maps',
-                theme_color: '#ffffff',
+                description: 'Aplikasi jadwal KRL Commuter Line Jakarta real-time. Cek waktu keberangkatan, rute, dan tarif dengan mudah.',
+                theme_color: '#16812B',
                 background_color: '#ffffff',
                 display: 'standalone',
                 scope: '/',
                 start_url: '/',
                 orientation: 'portrait',
+                categories: ['travel', 'transit', 'lifestyle'],
+                lang: 'id',
                 icons: [
                     {
                         src: 'pwa-192x192.png',
                         sizes: '192x192',
-                        type: 'image/png'
+                        type: 'image/png',
+                        purpose: 'any maskable'
                     },
                     {
                         src: 'pwa-512x512.png',
                         sizes: '512x512',
-                        type: 'image/png'
+                        type: 'image/png',
+                        purpose: 'any maskable'
                     }
                 ]
             }

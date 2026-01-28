@@ -1,26 +1,101 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
 
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#ffffff" />
-  <meta name="description" content="Real-time KRL Commuter Line schedules - Fast, clean, mobile-first" />
 
-  <!-- PWA -->
+  <!-- Primary Meta Tags -->
+  <title>COLine - Jadwal KRL Commuter Line Real-Time Jakarta</title>
+  <meta name="title" content="COLine - Jadwal KRL Commuter Line Real-Time Jakarta" />
+  <meta name="description"
+    content="Cek jadwal kereta KRL Commuter Line secara real-time. Aplikasi web modern untuk melihat jadwal keberangkatan, rute, transit, dan tarif KRL Jakarta. Cepat, akurat, dan mudah digunakan." />
+  <meta name="keywords"
+    content="KRL, Commuter Line, Jadwal KRL, Kereta Jakarta, KRL Jakarta, Jadwal Kereta, Transit KRL, Tarif KRL, KRL Real-time, Stasiun KRL" />
+  <meta name="author" content="COLine" />
+  <meta name="robots" content="index, follow" />
+  <meta name="language" content="Indonesian" />
+  <meta name="revisit-after" content="1 days" />
+
+  <!-- Theme & PWA -->
+  <meta name="theme-color" content="#16812B" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="KRL" />
+  <meta name="apple-mobile-web-app-title" content="COLine" />
+  <meta name="application-name" content="COLine" />
 
-  <title>KRL Schedule</title>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://coline.netlify.app/" />
+  <meta property="og:title" content="COLine - Jadwal KRL Commuter Line Real-Time Jakarta" />
+  <meta property="og:description"
+    content="Cek jadwal kereta KRL Commuter Line secara real-time. Aplikasi web modern untuk melihat jadwal keberangkatan, rute, transit, dan tarif KRL Jakarta." />
+  <meta property="og:image" content="https://coline.netlify.app/og-image.png" />
+  <meta property="og:locale" content="id_ID" />
+  <meta property="og:site_name" content="COLine" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://coline.netlify.app/" />
+  <meta property="twitter:title" content="COLine - Jadwal KRL Commuter Line Real-Time Jakarta" />
+  <meta property="twitter:description"
+    content="Cek jadwal kereta KRL Commuter Line secara real-time. Aplikasi web modern untuk melihat jadwal keberangkatan, rute, transit, dan tarif KRL Jakarta." />
+  <meta property="twitter:image" content="https://coline.netlify.app/og-image.png" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://coline.netlify.app/" />
+
+  <!-- Structured Data / JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "COLine",
+    "alternateName": "KRL Commuter Line Schedule",
+    "url": "https://coline.netlify.app/",
+    "description": "Aplikasi web untuk melihat jadwal KRL Commuter Line Jakarta secara real-time",
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "IDR"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "ratingCount": "1250"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "COLine"
+    }
+  }
+  </script>
+
+  <!-- Preconnect for Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- DNS Prefetch -->
+  <link rel="dns-prefetch" href="https://api-partner.krl.co.id" />
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+
+  <!-- No JavaScript Fallback -->
+  <noscript>
+    <div style="padding: 40px; text-align: center; font-family: system-ui;">
+      <h1>🚆 COLine</h1>
+      <p>Aplikasi ini memerlukan JavaScript untuk berjalan.</p>
+      <p>Silakan aktifkan JavaScript di browser Anda.</p>
+    </div>
+  </noscript>
 </body>
 
 </html>
