@@ -1,33 +1,41 @@
 import axios from 'axios';
 
-// Vercel Serverless Function
 export default async function handler(req, res) {
-    // Enable CORS
+    // CORS Handling
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader(
         'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
     );
 
-    // Handle OPTIONS request
+    // Handle preflight
     if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
     }
 
-    const { path } = req.query;
+    // Get path parameter
+    // Vercel rewrites pass params as query string or part of path.
+    // With destination: "/api/proxy?path=:path*", path should be in query.
+    const { path = [] } = req.query;
+    const pathStr = Array.isArray(path) ? path.join('/') : path;
 
-    // Construct target URL
-    // Note: req.query includes all query params. We need to reconstruct them minus 'path'.
-    // However, axios 'params' option handles this cleaner if we just pass req.query minus path.
+    if (!pathStr) {
+        return res.status(400).json({ error: 'Missing path parameter' });
+    }
 
+    // Prepare query params (exclude 'path' itself)
     const queryParams = { ...req.query };
     delete queryParams.path;
 
+    const targetUrl = `https://api-partner.krl.co.id/krl-webs/v1/${pathStr}`;
+
     try {
-        const response = await axios.get(`https://api-partner.krl.co.id/krl-webs/v1/${path}`, {
+        // console.log(`Proxying to: ${targetUrl}`); // Logs visible in Vercel Dashboard
+
+        const response = await axios.get(targetUrl, {
             params: queryParams,
             headers: {
                 'Accept': 'application/json',
@@ -39,10 +47,15 @@ export default async function handler(req, res) {
 
         res.status(200).json(response.data);
     } catch (error) {
-        console.error('Proxy Error:', error.message);
-        res.status(error.response?.status || 500).json({
-            error: 'Failed to fetch data',
-            details: error.message
+        // Return detailed error to client for debugging
+        const status = error.response?.status || 500;
+        const data = error.response?.data || { message: error.message };
+
+        res.status(status).json({
+            error: 'Proxy Error',
+            target: targetUrl,
+            status: status,
+            details: data
         });
     }
 }
