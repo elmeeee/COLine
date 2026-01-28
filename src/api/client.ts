@@ -2,7 +2,8 @@ import axios from 'axios'
 import { Station, Schedule, StationSchedule, FareDetail, TrainRoute } from './types'
 
 // Use local proxy in development, direct API in production
-const KRL_API_BASE_URL = import.meta.env.DEV ? '/api/krl-webs/v1' : 'https://api-partner.krl.co.id/krl-webs/v1'
+// Always use relative path to go through proxy (Vite in Dev, Netlify in Prod)
+const KRL_API_BASE_URL = '/api/krl-webs/v1'
 
 const api = axios.create({
     baseURL: KRL_API_BASE_URL,
