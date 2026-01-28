@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, Train } from 'lucide-react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { client } from '../api/client'
 import type { Schedule, Station } from '../api/types'
@@ -9,7 +9,7 @@ interface UpcomingTrainsListProps {
     fromStation?: Station
 }
 
-export default function UpcomingTrainsList({ schedules, fromStation }: UpcomingTrainsListProps) {
+export default function UpcomingTrainsList({ schedules }: UpcomingTrainsListProps) {
     const [expandedId, setExpandedId] = useState<string | null>(null)
 
     if (!schedules || schedules.length === 0) {

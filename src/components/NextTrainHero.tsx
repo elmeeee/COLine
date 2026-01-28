@@ -8,7 +8,7 @@ interface NextTrainHeroProps {
     userLocation?: { lat: number; lon: number } | null
 }
 
-export default function NextTrainHero({ schedule, fromStation, toStation }: NextTrainHeroProps) {
+export default function NextTrainHero({ schedule, toStation }: NextTrainHeroProps) {
     if (!schedule) {
         return (
             <div style={{
