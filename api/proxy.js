@@ -1,8 +1,13 @@
-// Vercel Serverless Function (Standard Node.js)
-// Using native fetch (available in Node 18+)
+// Vercel Serverless Function (Node.js)
+import https from 'https';
+
+// Create an agent that ignores SSL certificate errors
+// This is often needed for some enterprise/government APIs
+const agent = new https.Agent({
+    rejectUnauthorized: false
+});
 
 export default async function handler(req, res) {
-    // CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -20,19 +25,28 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: 'Missing path parameter' });
         }
 
-        // Reconstruct query params
         const queryParams = new URLSearchParams(req.query);
         queryParams.delete('path');
 
-        // Construct Target URL
-        // Handle array path from vercel rewrite
         const pathStr = Array.isArray(path) ? path.join('/') : path;
         const targetUrl = `https://api-partner.krl.co.id/krl-webs/v1/${pathStr}?${queryParams.toString()}`;
 
-        // console.log('Proxy target:', targetUrl);
+        // console.log('Proxying to (insecure):', targetUrl);
 
-        const response = await fetch(targetUrl, {
-            method: 'GET',
+        // Use built-in fetch with the custom dispatcher/agent is tricky in Node 18 globals.
+        // Instead, let's use the 'https' module directly or add the 'duplex' option if usually stream.
+        // Actually, for Node 18+, we can pass { dispatcher } to fetch if using undici, but global fetch is simpler.
+        // Global fetch in Node doesn't easily accept https agent.
+
+        // Let's use the old reliable 'axios' again but with the custom agent.
+        // We confirmed axios is installed.
+        // Axios is easier to configure with https agent.
+
+        // Dynamic import axios to ensure it works in ESM context
+        const axios = (await import('axios')).default;
+
+        const response = await axios.get(targetUrl, {
+            httpsAgent: agent, // BYPASS SSL ERRORS
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -41,19 +55,12 @@ export default async function handler(req, res) {
             }
         });
 
-        if (!response.ok) {
-            // Logs visible in Vercel Function Logs
-            console.error('Upstream Error:', response.status, response.statusText);
-            const text = await response.text();
-            console.error('Upstream Body:', text);
-            return res.status(response.status).send(text);
-        }
-
-        const data = await response.json();
-        return res.status(200).json(data);
+        res.status(200).json(response.data);
 
     } catch (error) {
-        console.error('Internal Proxy Error:', error);
-        return res.status(500).json({ error: error.message, stack: error.stack });
+        console.error('Proxy Error:', error.message);
+        const status = error.response?.status || 500;
+        const data = error.response?.data || { message: error.message, stack: error.stack };
+        res.status(status).json({ error: 'Proxy Error', details: data });
     }
 }
