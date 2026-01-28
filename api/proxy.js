@@ -1,8 +1,7 @@
 // Vercel Serverless Function (Node.js)
 import https from 'https';
 
-// Create an agent that ignores SSL certificate errors
-// This is often needed for some enterprise/government APIs
+// Agent ignore SSL is not needed if using corsproxy, but kept just in case
 const agent = new https.Agent({
     rejectUnauthorized: false
 });
@@ -20,33 +19,23 @@ export default async function handler(req, res) {
 
     try {
         const { path } = req.query;
-
-        if (!path) {
-            return res.status(400).json({ error: 'Missing path parameter' });
-        }
+        if (!path) return res.status(400).json({ error: 'Missing path' });
 
         const queryParams = new URLSearchParams(req.query);
         queryParams.delete('path');
 
         const pathStr = Array.isArray(path) ? path.join('/') : path;
-        const targetUrl = `https://api-partner.krl.co.id/krl-webs/v1/${pathStr}?${queryParams.toString()}`;
 
-        // console.log('Proxying to (insecure):', targetUrl);
+        // USE CORSPROXY.IO to bypass IP Block
+        const krlUrl = `https://api-partner.krl.co.id/krl-webs/v1/${pathStr}?${queryParams.toString()}`;
+        const targetUrl = `https://corsproxy.io/?url=${encodeURIComponent(krlUrl)}`;
 
-        // Use built-in fetch with the custom dispatcher/agent is tricky in Node 18 globals.
-        // Instead, let's use the 'https' module directly or add the 'duplex' option if usually stream.
-        // Actually, for Node 18+, we can pass { dispatcher } to fetch if using undici, but global fetch is simpler.
-        // Global fetch in Node doesn't easily accept https agent.
+        // console.log('Proxying via CorsProxy:', targetUrl);
 
-        // Let's use the old reliable 'axios' again but with the custom agent.
-        // We confirmed axios is installed.
-        // Axios is easier to configure with https agent.
-
-        // Dynamic import axios to ensure it works in ESM context
         const axios = (await import('axios')).default;
 
         const response = await axios.get(targetUrl, {
-            httpsAgent: agent, // BYPASS SSL ERRORS
+            httpsAgent: agent,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -58,9 +47,9 @@ export default async function handler(req, res) {
         res.status(200).json(response.data);
 
     } catch (error) {
-        console.error('Proxy Error:', error.message);
+        console.error('CorsProxy Error:', error.message);
         const status = error.response?.status || 500;
-        const data = error.response?.data || { message: error.message, stack: error.stack };
+        const data = error.response?.data || { message: error.message };
         res.status(status).json({ error: 'Proxy Error', details: data });
     }
 }
